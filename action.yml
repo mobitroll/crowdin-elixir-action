@@ -1,0 +1,24 @@
+name: 'crowdin-elixir-action'
+
+description: 'Tries to manage and synchronize Crowdin'
+
+inputs:
+  source_file:
+    description: 'Crowdin source file'
+    required: true
+  export_pattern:
+    description: 'Crowdin source export pattern'
+    required: true
+  base_branch:
+    description: 'Base branch for pull request'
+    required: true
+    default: 'master'
+  update_source:
+    description: 'Update source to crowdin'
+    required: false
+  update_translation:
+    description: 'Update translation from crowdin'
+    required: false
+runs:
+  using: docker
+  image: 'Dockerfile'
