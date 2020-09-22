@@ -37,7 +37,7 @@ defmodule Mix.Tasks.Crowdin do
          201 <- res.status,
          %{"data" => %{"id" => storage_id}} <- res.body do
       case find_matching_remote_file(client, project_id, source_name) do
-        nil -> Crowdin.add_file(client, project_id, storage_id, source_name)
+        nil -> Crowdin.add_file(client, project_id, storage_id, source_name, export_pattern)
         file -> Crowdin.update_file(client, project_id, file["data"]["id"], storage_id)
       end
     end
