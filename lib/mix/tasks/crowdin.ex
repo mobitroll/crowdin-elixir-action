@@ -6,6 +6,7 @@ defmodule Mix.Tasks.Crowdin do
   def run([workspace]) do
     IO.puts "Mix crowdin task #{inspect workspace}"
 
+    organization = System.get_env("INPUT_ORGANIZATION")
     token = System.get_env("INPUT_TOKEN")
     project_id = System.get_env("INPUT_PROJECT_ID")
     source_file = System.get_env("INPUT_SOURCE_FILE")
@@ -14,10 +15,10 @@ defmodule Mix.Tasks.Crowdin do
 
     IO.puts "Update source: #{update_source} update translation: #{update_translation}"
     if update_source == "true" do
-      update_source(workspace, token, project_id, source_file)
+      update_source(workspace, organization, token, project_id, source_file)
     end
     if update_translation == "true" do
-      update_translation(workspace, token, project_id, source_file)
+      update_translation(workspace, organization, token, project_id, source_file)
     end
   end
 
@@ -125,15 +126,15 @@ defmodule Mix.Tasks.Crowdin do
     end
   end
 
-  defp update_source(workspace, token, project_id, source_file) do
+  defp update_source(workspace, organization, token, project_id, source_file) do
     IO.puts "Sync source to crowdin"
-    client = Crowdin.client(token)
+    client = Crowdin.client(organization, token)
     upload_source(workspace, client, project_id, source_file)
   end
 
-  defp update_translation(workspace, token, project_id, source_file) do
+  defp update_translation(workspace, organization, token, project_id, source_file) do
     IO.puts "Update translation from crowdin"
-    client = Crowdin.client(token)
+    client = Crowdin.client(organization, token)
     source_name = Path.basename(source_file)    
     case find_matching_remote_file(client, project_id, source_name) do
       nil ->

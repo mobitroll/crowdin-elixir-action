@@ -1,11 +1,12 @@
 defmodule CrowdinElixirAction.Crowdin do
   use Tesla
 
-  plug Tesla.Middleware.BaseUrl, "https://crowdin.com/api/v2"
+  # plug Tesla.Middleware.BaseUrl, "https://crowdin.com/api/v2"
   plug Tesla.Middleware.JSON
 
-  def client(token) do
+  def client(organization_domain, token) do
     middleware = [
+      {Tesla.Middleware.BaseUrl, "https://#{organization_domain}.crowdin.com/api/v2"},
       {Tesla.Middleware.Headers, [{"authorization", "Bearer " <> token}]},
     ]
 
