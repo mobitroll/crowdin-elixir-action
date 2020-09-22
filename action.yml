@@ -3,8 +3,14 @@ name: 'crowdin-elixir-action'
 description: 'Tries to manage and synchronize Crowdin'
 
 inputs:
+  organization:
+    description: 'Crowdin organization'
+    required: false
+  project_id:
+    description: 'Crowdin project id'
+    required: true
   source_file:
-    description: 'Crowdin source file'
+    description: 'Crowdin source file, can have optional format source_file:export_pattern:source_file_name'
     required: true
   export_pattern:
     description: 'Crowdin source export pattern'
@@ -18,6 +24,25 @@ inputs:
     required: false
   update_translation:
     description: 'Update translation from crowdin'
+    required: false
+  skip_untranslated_strings:
+    description: 'Skip untranslated strings'
+    required: true
+    default: 'false'
+  export_approved_only:
+    description: 'Export only approved strings'
+    required: true
+    default: 'false'
+  front_end_context:
+    description: 'Front-end tweak to provide context'
+    required: false
+    default: 'false'
+  automatic_merge_pr:
+    description: 'Automatic merge PR'
+    required: false
+    default: 'false'
+  github_api_token:
+    description: 'Token used to make github API requests(create PR), if not set, GITHUB_TOKEN will be used and created PR will not trigger another workflow.'
     required: false
 runs:
   using: docker

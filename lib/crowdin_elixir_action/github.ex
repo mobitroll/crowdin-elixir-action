@@ -20,4 +20,11 @@ defmodule CrowdinElixirAction.Github do
   def create_pull_request(client, repo, body) do
     post(client, "/repos/#{repo}/pulls", body)
   end
+
+  def merge_pull_request(client, repo, pull_number) do
+    put(client, "/repos/#{repo}/pulls/#{pull_number}/merge", %{
+      "commit_title" => "Merge pull request #{pull_number} from #{repo}",
+      "commit_message" => "Update localization"
+    })
+  end
 end

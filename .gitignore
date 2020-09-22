@@ -22,3 +22,9 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 crowdin_elixir_action-*.tar
 
+# Emacs temp file
+*~
+
+# IntelliJ file
+*.iml
+*.idea
