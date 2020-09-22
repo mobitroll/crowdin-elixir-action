@@ -112,7 +112,7 @@ defmodule Mix.Tasks.Crowdin do
         base_branch = System.get_env("INPUT_BASE_BRANCH")
 
         client = Github.client(github_token)
-        with {:ok, res} <- Github.get_pulls(client, github_repository, base: base_branch),
+        with {:ok, res} <- Github.get_pulls(client, github_repository, base: base_branch, head: localization_branch),
              200 <- res.status, [] <- res.body do
           IO.puts "Create PR"
           Github.create_pull_request(client, github_repository, %{title: "Update localization", base: base_branch, head: localization_branch})
