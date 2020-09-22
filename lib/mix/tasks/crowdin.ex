@@ -113,14 +113,16 @@ defmodule Mix.Tasks.Crowdin do
 
         client = Github.client(github_token)
         with {:ok, res} <- Github.get_pulls(client, github_repository, base: base_branch, head: localization_branch),
-             200 <- res.status, [] <- res.body do
+             200 <- res.status,
+             prs <- res.body,
+             matching_pr when not is_nil(matching_pr) <- Enum.map(prs, fn pr -> pr["head"]["ref"] == localization_branch end) do
           IO.puts "Create PR"
           Github.create_pull_request(client, github_repository, %{title: "Update localization", base: base_branch, head: localization_branch})
         else
           {:error, err} ->
             IO.puts "Got error #{err}"
             {:error, err}
-          [_ | _] ->
+          nil ->
             IO.puts "PR already exists"
         end
     end
