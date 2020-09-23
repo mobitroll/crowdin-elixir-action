@@ -19,6 +19,14 @@ inputs:
   update_translation:
     description: 'Update translation from crowdin'
     required: false
+  skip_untranslated_strings:
+    description: 'Skip untranslated strings'
+    required: true
+    default: 'false'
+  export_approved_only:
+    description: 'Export only approved strings'
+    required: true
+    default: 'false'
 runs:
   using: docker
   image: 'Dockerfile'
