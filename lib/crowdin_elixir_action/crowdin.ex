@@ -48,8 +48,8 @@ defmodule CrowdinElixirAction.Crowdin do
   end
 
   def build_project_file_translation(client, project_id, file_id, target_language_id) do
-    skip_untranslated_strings = System.get_env("INPUT_SKIP_UNTRANSLATED_STRINGS")
-    export_approved_only = System.get_env("INPUT_EXPORT_APPROVED_ONLY")
+    skip_untranslated_strings = System.get_env("INPUT_SKIP_UNTRANSLATED_STRINGS") == true
+    export_approved_only = System.get_env("INPUT_EXPORT_APPROVED_ONLY") == true
     post(client, "/projects/#{project_id}/translations/builds/files/#{file_id}", %{
       targetLanguageId: target_language_id,
       skipUntranslatedStrings: skip_untranslated_strings,
