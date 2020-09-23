@@ -82,8 +82,8 @@ defmodule CrowdinElixirAction do
       {"", 0} ->
         IO.puts "No changes of translation"
         :ok
-      _ ->
-        IO.puts "Push to branch #{localization_branch}"
+      result ->
+        IO.puts "Push to branch #{localization_branch} #{inspect result}"
 
         System.cmd("git", ["add", "."])
         System.cmd("git", ["commit", "-m", "Update localization"])
