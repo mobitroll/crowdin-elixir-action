@@ -73,7 +73,15 @@ defmodule CrowdinElixirAction do
     repo_url="https://#{github_actor}:#{github_token}@github.com/#{github_repository}.git"
     System.cmd("git", ["config", "--global", "user.email", "crowdin-elixir-action@kahoot.com"])
     System.cmd("git", ["config", "--global", "user.name", "Crowdin Elixir Action"])
-    System.cmd("git", ["checkout", "-b", localization_branch])
+    case System.cmd("git", ["show-branch", "remotes/origin/#{localization_branch}"]) do
+      [_, 128] ->
+        IO.puts "Create new #{localization_branch} branch"
+        System.cmd("git", ["checkout", "-b", localization_branch])
+      [_, 0] ->
+        IO.puts "Create #{localization_branch} branch based on origin"
+        System.cmd("git", ["checkout", "-b", localization_branch, "remotes/origin/#{localization_branch}"])
+    end
+
 
     case System.cmd("git", ["status", "--porcelain"]) do
       {"", 0} ->
