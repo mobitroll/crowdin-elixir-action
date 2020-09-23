@@ -14,9 +14,8 @@ defmodule CrowdinElixirAction do
     source_name = Path.basename(source_file)
     export_pattern = System.get_env("INPUT_EXPORT_PATTERN")
     IO.puts "Upload source with #{source_name} export pattern: #{export_pattern}"
-    with {:ok, res} <- Crowdin.add_storage(client, path),
-         201 <- res.status,
-         %{"data" => %{"id" => storage_id}} <- res.body do
+    with {:ok, %{status: 200, body: body}} <- Crowdin.add_storage(client, path),
+         %{"data" => %{"id" => storage_id}} <- body do
       case find_matching_remote_file(client, project_id, source_name) do
         nil -> Crowdin.add_file(client, project_id, storage_id, source_name, export_pattern)
         file -> Crowdin.update_file(client, project_id, file["data"]["id"], storage_id)
@@ -26,9 +25,8 @@ defmodule CrowdinElixirAction do
 
   def download_translation(workspace, client, project_id, file) do
     IO.puts "Download translation"
-    with {:ok, res} <- Crowdin.get_project(client, project_id),
-         200 <- res.status,
-         %{"data" => %{"targetLanguages" => target_languages}} <- res.body do
+    with {:ok, %{status: 200, body: body}} <- Crowdin.get_project(client, project_id),
+         %{"data" => %{"targetLanguages" => target_languages}} <- body do
       Enum.each(target_languages, fn target_language ->
         case download_translation_for_language(workspace, client, project_id, file, target_language) do
           :ok ->
@@ -41,9 +39,8 @@ defmodule CrowdinElixirAction do
   end
 
   def download_translation_for_language(workspace, client, project_id, file, target_language) do
-    with {:ok, res} <- Crowdin.build_project_file_translation(client, project_id, file["id"], target_language["id"]),
-         200 <- res.status,
-         %{"data" => %{"url" => url}} <- res.body,
+    with {:ok, %{status: 200, body: body}} <- Crowdin.build_project_file_translation(client, project_id, file["id"], target_language["id"]),
+         %{"data" => %{"url" => url}} <- body,
          {:ok, res} <- Tesla.get(url) do
       IO.puts "Download translation for language: #{inspect target_language} to #{inspect file}"
       export_pattern = file["exportOptions"]["exportPattern"]
