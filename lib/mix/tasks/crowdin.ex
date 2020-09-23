@@ -52,9 +52,9 @@ defmodule Mix.Tasks.Crowdin do
       Enum.each(target_languages, fn target_language ->
         case download_translation_for_language(workspace, client, project_id, file, target_language) do
           :ok ->
-            IO.puts "Downloaded translation for #{inspect target_language} to #{inspect file}"
+            IO.puts "Downloaded translation"
           err ->
-            IO.puts "Failed to download translation for #{inspect target_language} to #{inspect file} err: #{inspect err}"
+            IO.puts "Failed to download translation err: #{inspect err}"
         end
       end)
     end
