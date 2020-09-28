@@ -3,6 +3,12 @@ name: 'crowdin-elixir-action'
 description: 'Tries to manage and synchronize Crowdin'
 
 inputs:
+  organization:
+    description: 'Crowdin organization'
+    required: false
+  project_id:
+    description: 'Crowdin project id'
+    required: true
   source_file:
     description: 'Crowdin source file'
     required: true
