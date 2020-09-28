@@ -14,7 +14,7 @@ defmodule CrowdinElixirAction do
     source_name = Path.basename(source_file)
     export_pattern = System.get_env("INPUT_EXPORT_PATTERN")
     IO.puts "Upload source with #{source_name} export pattern: #{export_pattern}"
-    with {:ok, %{status: 200, body: body}} <- Crowdin.add_storage(client, path),
+    with {:ok, %{status: 201, body: body}} <- Crowdin.add_storage(client, path),
          %{"data" => %{"id" => storage_id}} <- body do
       case find_matching_remote_file(client, project_id, source_name) do
         nil -> Crowdin.add_file(client, project_id, storage_id, source_name, export_pattern)
