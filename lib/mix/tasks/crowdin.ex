@@ -13,10 +13,10 @@ defmodule Mix.Tasks.Crowdin do
 
     IO.puts "Update source: #{update_source} update translation: #{update_translation}"
     if update_source == "true" do
-      CrowdinElixirAction.update_source(workspace, organization, token, project_id, source_file)
+      CrowdinElixirAction.update_source(workspace, organization, token, project_id, source_file) |> IO.inspect(label: :update_source)
     end
     if update_translation == "true" do
-      CrowdinElixirAction.update_translation(workspace, organization, token, project_id, source_file)
+      CrowdinElixirAction.update_translation(workspace, organization, token, project_id, source_file) |> IO.inspect(label: :update_translation)
     end
   end
 
