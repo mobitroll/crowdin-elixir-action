@@ -127,6 +127,7 @@ defmodule CrowdinElixirAction do
     IO.puts "Update translation from crowdin"
     client = Crowdin.client(organization, token)
     for source_file <- source_files do
+      IO.puts "Update translation for #{source_file}"
       source_name = Path.basename(source_file)
       case find_matching_remote_file(client, project_id, source_name) do
         nil ->
@@ -134,8 +135,8 @@ defmodule CrowdinElixirAction do
         file ->
           IO.puts "Find matching remote file #{inspect file}"
           download_translation(workspace, client, project_id, file["data"])
-          create_pr_if_changed(workspace)
       end
     end
+    create_pr_if_changed(workspace)
   end
 end
