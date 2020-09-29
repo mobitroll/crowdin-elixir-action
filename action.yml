@@ -12,9 +12,6 @@ inputs:
   source_file:
     description: 'Crowdin source file'
     required: true
-  source_files:
-    description: 'Crowdin source files'
-    required: true
   export_pattern:
     description: 'Crowdin source export pattern'
     required: true
