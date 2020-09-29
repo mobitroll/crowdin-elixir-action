@@ -12,11 +12,12 @@ defmodule Mix.Tasks.Crowdin do
     update_translation = System.get_env("INPUT_UPDATE_TRANSLATION")
 
     source_files = String.split(source_file, ",")
-    IO.puts "Update source: #{update_source} update translation: #{update_translation} source_files: #{inspect source_files}"
     if update_source == "true" do
+      IO.puts "Update source: #{update_source} update translation: #{update_translation} source_files: #{inspect source_files}"
       CrowdinElixirAction.update_source(workspace, organization, token, project_id, source_files) |> IO.inspect(label: :update_source)
     end
     if update_translation == "true" do
+      IO.puts "Update translation: #{update_source} update translation: #{update_translation} source_files: #{inspect source_files}"
       CrowdinElixirAction.update_translation(workspace, organization, token, project_id, source_files) |> IO.inspect(label: :update_translation)
     end
   end
