@@ -132,6 +132,7 @@ defmodule CrowdinElixirAction do
         nil ->
           IO.puts "Source doesn't exist on crowdin yet"
         file ->
+          IO.puts "Find matching remote file #{inspect file}"
           download_translation(workspace, client, project_id, file["data"])
           create_pr_if_changed(workspace)
       end
