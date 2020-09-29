@@ -46,15 +46,16 @@ defmodule CrowdinElixirAction do
          {:ok, res} <- Tesla.get(url) do
       IO.puts "Download translation for language: #{inspect target_language} to #{inspect file}"
       export_pattern = file["exportOptions"]["exportPattern"]
-      target_file_name = translate_file_name(export_pattern, target_language)
+      target_file_name = translate_file_name(export_pattern, target_language, file)
       target_path = Path.join(workspace, target_file_name)
       File.mkdir_p(Path.dirname(target_path))
       File.write(target_path, res.body)
     end
   end
 
-  def translate_file_name(export_pattern, target_language) do
-    Enum.reduce(target_language, export_pattern, fn {key, value}, acc ->
+  def translate_file_name(export_pattern, target_language, file) do
+    target_language
+    |> Enum.reduce(export_pattern, fn {key, value}, acc ->
       if is_binary(value) do
         key = key |> String.replace(~r/([A-Z])/, "_\\1") |> String.downcase()
         String.replace(acc, "%#{key}%", to_string(value))
@@ -62,6 +63,7 @@ defmodule CrowdinElixirAction do
         acc
       end
     end)
+    |> String.replace("%file_name%", file["name"])
   end
 
   def create_pr_if_changed(workspace) do
