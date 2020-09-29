@@ -9,16 +9,18 @@ defmodule CrowdinElixirAction do
     end
   end
 
-  def upload_source(workspace, client, project_id, source_file) do
-    path = Path.join(workspace, source_file)
-    source_name = Path.basename(source_file)
-    export_pattern = System.get_env("INPUT_EXPORT_PATTERN")
-    IO.puts "Upload source with #{source_name} export pattern: #{export_pattern}"
-    with {:ok, %{status: 201, body: body}} <- Crowdin.add_storage(client, path),
-         %{"data" => %{"id" => storage_id}} <- body do
-      case find_matching_remote_file(client, project_id, source_name) do
-        nil -> Crowdin.add_file(client, project_id, storage_id, source_name, export_pattern)
-        file -> Crowdin.update_file(client, project_id, file["data"]["id"], storage_id)
+  def upload_source(workspace, client, project_id, source_files) do
+    for source_file <- source_files do
+      path = Path.join(workspace, source_file)
+      source_name = Path.basename(source_file)
+      export_pattern = System.get_env("INPUT_EXPORT_PATTERN")
+      IO.puts "Upload source with #{source_name} export pattern: #{export_pattern}"
+      with {:ok, %{status: 201, body: body}} <- Crowdin.add_storage(client, path),
+           %{"data" => %{"id" => storage_id}} <- body do
+        case find_matching_remote_file(client, project_id, source_name) do
+          nil -> Crowdin.add_file(client, project_id, storage_id, source_name, export_pattern)
+          file -> Crowdin.update_file(client, project_id, file["data"]["id"], storage_id)
+        end
       end
     end
   end
@@ -113,22 +115,24 @@ defmodule CrowdinElixirAction do
     end
   end
 
-  def update_source(workspace, organization, token, project_id, source_file) do
+  def update_source(workspace, organization, token, project_id, source_files) do
     IO.puts "Sync source to crowdin"
     client = Crowdin.client(organization, token)
-    upload_source(workspace, client, project_id, source_file)
+    upload_source(workspace, client, project_id, source_files)
   end
 
-  def update_translation(workspace, organization, token, project_id, source_file) do
+  def update_translation(workspace, organization, token, project_id, source_files) do
     IO.puts "Update translation from crowdin"
     client = Crowdin.client(organization, token)
-    source_name = Path.basename(source_file)
-    case find_matching_remote_file(client, project_id, source_name) do
-      nil ->
-        IO.puts "Source doesn't exist on crowdin yet"
-      file ->
-        download_translation(workspace, client, project_id, file["data"])
-        create_pr_if_changed(workspace)
+    for source_file <- source_files do
+      source_name = Path.basename(source_file)
+      case find_matching_remote_file(client, project_id, source_name) do
+        nil ->
+          IO.puts "Source doesn't exist on crowdin yet"
+        file ->
+          download_translation(workspace, client, project_id, file["data"])
+          create_pr_if_changed(workspace)
+      end
     end
   end
 end
