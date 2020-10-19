@@ -2,6 +2,16 @@ defmodule CrowdinElixirAction do
   alias CrowdinElixirAction.Crowdin
   alias CrowdinElixirAction.Github
 
+  # We need to translate sometimes
+  def get_source_name(source_file) do
+    case System.get_env("INPUT_SOURCE_NAME_PATTERN") do
+      nil ->
+        Path.basename(source_file)
+      source_name_pattern ->
+        "42"
+    end
+  end
+
   def find_matching_remote_file(client, project_id, source_name) do
     with {:ok, res} <- Crowdin.list_files(client, project_id),
          200 <- res.status do
@@ -12,7 +22,7 @@ defmodule CrowdinElixirAction do
   def upload_source(workspace, client, project_id, source_files) do
     for source_file <- source_files do
       path = Path.join(workspace, source_file)
-      source_name = Path.basename(source_file)
+      source_name = get_source_name(source_file)
       export_pattern = System.get_env("INPUT_EXPORT_PATTERN")
       IO.puts "Upload source with #{source_name} export pattern: #{export_pattern}"
       with {:ok, %{status: 201, body: body}} <- Crowdin.add_storage(client, path),
@@ -128,7 +138,7 @@ defmodule CrowdinElixirAction do
     client = Crowdin.client(organization, token)
     for source_file <- source_files do
       IO.puts "Update translation for #{source_file}"
-      source_name = Path.basename(source_file)
+      source_name = get_source_name(source_file)
       case find_matching_remote_file(client, project_id, source_name) do
         nil ->
           IO.puts "Source doesn't exist on crowdin yet"
