@@ -13,7 +13,7 @@ inputs:
     description: 'Crowdin source file'
     required: true
   source_name_pattern:
-    description: 'Crowdin remote source file name pattern'
+    description: 'Crowdin remote source file name pattern, supported pattern %parent_folder_name%, %file_name%'
     required: false
   export_pattern:
     description: 'Crowdin source export pattern'

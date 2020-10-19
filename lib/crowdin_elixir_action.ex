@@ -8,7 +8,11 @@ defmodule CrowdinElixirAction do
       nil ->
         Path.basename(source_file)
       source_name_pattern ->
-        "42"
+        file_name = Path.basename(source_file)
+        parent_folder_name = source_file |> Path.dirname() |> Path.basename()
+        source_name_pattern
+        |> String.replace("%file_name%", file_name)
+        |> String.replace("%parent_folder_name%", parent_folder_name)
     end
   end
 
