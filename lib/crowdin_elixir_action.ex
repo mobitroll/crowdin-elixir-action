@@ -208,7 +208,10 @@ defmodule CrowdinElixirAction do
             IO.puts "Got error #{err}"
             {:error, err}
           pr ->
-            IO.puts "PR already exists"
+            pr_number = pr["number"]
+            IO.puts "PR already exists ##{pr_number}"
+            Github.delete_localization_label(client, github_repository, pr_number)
+            Github.add_localization_label(client, github_repository, pr_number) |> IO.inspect(label: :add_label)
         end
     end
   end

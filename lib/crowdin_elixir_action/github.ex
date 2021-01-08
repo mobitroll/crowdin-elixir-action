@@ -27,4 +27,14 @@ defmodule CrowdinElixirAction.Github do
       "commit_message" => "Update localization"
     })
   end
+
+  def add_localization_label(client, repo, issue_number) do
+    post(client, "/repos/#{repo}/issues/#{issue_number}/labels", %{
+      labels: ["localization"]
+    })
+  end
+
+  def delete_localization_label(client, repo, issue_number) do
+    delete(client, "/repos/#{repo}/issues/#{issue_number}/labels/localization")
+  end
 end
