@@ -176,10 +176,7 @@ defmodule CrowdinElixirAction do
     File.cd!(workspace)
 
     localization_branch = "localization"
-    github_actor = System.get_env("GITHUB_ACTOR")
-    github_token = System.get_env("GITHUB_TOKEN")
     github_repository = System.get_env("GITHUB_REPOSITORY")
-    repo_url="https://#{github_actor}:#{github_token}@github.com/#{github_repository}.git"
     System.cmd("git", ["config", "--global", "user.email", "crowdin-elixir-action@kahoot.com"])
     System.cmd("git", ["config", "--global", "user.name", "Crowdin Elixir Action"])
 
@@ -202,7 +199,7 @@ defmodule CrowdinElixirAction do
              prs <- res.body,
              matching_pr when is_nil(matching_pr) <- Enum.find(prs, fn pr -> pr["head"]["ref"] == localization_branch end) do
           IO.puts "Create PR"
-          {:ok, %{status: 201, body: pr}} = Github.create_pull_request(client, github_repository, %{title: "Update localization", base: base_branch, head: localization_branch})
+          {:ok, %{status: 201, body: _pr}} = Github.create_pull_request(client, github_repository, %{title: "Update localization", base: base_branch, head: localization_branch})
         else
           {:error, err} ->
             IO.puts "Got error #{err}"
