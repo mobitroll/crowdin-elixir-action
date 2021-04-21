@@ -41,6 +41,9 @@ inputs:
     description: 'Automatic merge PR'
     required: false
     default: 'false'
+  crowdin_token:
+    description: 'Token used to make crowdin requests'
+    required: false
   github_api_token:
     description: 'Token used to make github API requests(create PR), if not set, GITHUB_TOKEN will be used and created PR will not trigger another workflow.'
     required: false
