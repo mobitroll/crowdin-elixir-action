@@ -172,9 +172,9 @@ defmodule CrowdinElixirAction do
   end
 
   def create_pr_if_changed(workspace) do
-    IO.puts "Create PR if changed"
+    IO.puts "Create PR if changed 1"
     File.cd!(workspace)
-
+    System.cmd("git", ["remote", "-v"]) |> IO.inspect(label: :remote)
     localization_branch = "localization"
     github_repository = System.get_env("GITHUB_REPOSITORY")
     System.cmd("git", ["config", "--global", "user.email", "crowdin-elixir-action@kahoot.com"])
