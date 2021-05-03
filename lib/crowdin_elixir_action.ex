@@ -83,7 +83,9 @@ defmodule CrowdinElixirAction do
            %{"data" => %{"id" => storage_id}} <- body do
         case find_matching_remote_file(client, project_id, source_name) do
           nil -> Crowdin.add_file(client, project_id, storage_id, source_name, export_pattern)
-          file -> Crowdin.update_file(client, project_id, file["data"]["id"], storage_id)
+          file ->
+            {:ok, %{status: 200} = res} = Crowdin.update_file(client, project_id, file["data"]["id"], storage_id)
+            {:ok, res}
         end
       end
     end
