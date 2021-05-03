@@ -5,6 +5,7 @@ defmodule CrowdinElixirAction do
   def serialize_value(value) when is_binary(value) do
     normalized_value = value
                        |> String.replace("\n", "\\n")
+                       |> String.replace("\t", "\\t")
                        |> String.replace("\"", "\\\"")
     ["\"", normalized_value, "\""]
   end
