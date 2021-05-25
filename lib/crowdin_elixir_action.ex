@@ -94,17 +94,16 @@ defmodule CrowdinElixirAction do
 
   def download_translation(workspace, client, project_id, file) do
     IO.puts "Download translation 2021-05-25"
-    with {:ok, %{status: 200, body: body}} <- Crowdin.get_project(client, project_id) |> IO.inspect(label: :get_project),
-         %{"data" => %{"targetLanguages" => target_languages}} <- body do
-      Enum.each(target_languages, fn target_language ->
-        case download_translation_for_language(workspace, client, project_id, file, target_language) do
-          :ok ->
-            IO.puts "Downloaded translation for language: #{target_language["id"]} of #{file["name"]}"
-          err ->
-            IO.puts "Failed to download translation err: #{inspect err}"
-        end
-      end)
-    end
+    {:ok, %{status: 200, body: body}} = Crowdin.get_project(client, project_id)
+    target_languages = get_in(body, ["data", "targetLanguages"])
+    Enum.each(target_languages, fn target_language ->
+      case download_translation_for_language(workspace, client, project_id, file, target_language) do
+        :ok ->
+          IO.puts "Downloaded translation for language: #{target_language["id"]} of #{file["name"]}"
+        err ->
+          IO.puts "Failed to download translation err: #{inspect err}"
+      end
+    end)
   end
 
   def download_translation_for_language(workspace, client, project_id, file, target_language) do
