@@ -93,8 +93,8 @@ defmodule CrowdinElixirAction do
   end
 
   def download_translation(workspace, client, project_id, file) do
-    IO.puts "Download translation"
-    with {:ok, %{status: 200, body: body}} <- Crowdin.get_project(client, project_id),
+    IO.puts "Download translation 2021-05-25"
+    with {:ok, %{status: 200, body: body}} <- Crowdin.get_project(client, project_id) |> IO.inspect(label: :get_project),
          %{"data" => %{"targetLanguages" => target_languages}} <- body do
       Enum.each(target_languages, fn target_language ->
         case download_translation_for_language(workspace, client, project_id, file, target_language) do
