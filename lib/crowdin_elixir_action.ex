@@ -92,12 +92,12 @@ defmodule CrowdinElixirAction do
     end
   end
 
-  def download_translation(workspace, client, project_id, file) do
+  def download_translation(workspace, client, project_id, file, export_pattern) do
     IO.puts "Download translation 2021-05-25"
     {:ok, %{status: 200, body: body}} = Crowdin.get_project(client, project_id)
     target_languages = get_in(body, ["data", "targetLanguages"])
     Enum.each(target_languages, fn target_language ->
-      case download_translation_for_language(workspace, client, project_id, file, target_language) do
+      case download_translation_for_language(workspace, client, project_id, file, target_language, export_pattern) do
         :ok ->
           IO.puts "Downloaded translation for language: #{target_language["id"]} of #{file["name"]}"
         err ->
@@ -106,12 +106,11 @@ defmodule CrowdinElixirAction do
     end)
   end
 
-  def download_translation_for_language(workspace, client, project_id, file, target_language) do
+  def download_translation_for_language(workspace, client, project_id, file, target_language, export_pattern) do
     with {:ok, %{status: 200, body: body}} <- Crowdin.build_project_file_translation(client, project_id, file["id"], target_language["id"]),
          %{"data" => %{"url" => url}} <- body,
          {:ok, res} <- Tesla.get(url) do
       IO.puts "Download translation for language: #{target_language["id"]} of #{file["name"]}"
-      export_pattern = file["exportOptions"]["exportPattern"]
       target_file_name = translate_file_name(export_pattern, target_language, file)
       target_path = Path.join(workspace, target_file_name)
       File.mkdir_p(Path.dirname(target_path))
@@ -236,14 +235,14 @@ defmodule CrowdinElixirAction do
     client = Crowdin.client(organization, token)
     switch_to_localization_branch(workspace)
     for source_file_val <- source_files do
-      [source_file, _export_pattern, source_name] = parse_source_file(workspace, source_file_val, false)
+      [source_file, export_pattern, source_name] = parse_source_file(workspace, source_file_val, false)
       IO.puts "Update translation for #{source_file}"
       case find_matching_remote_file(client, project_id, source_name) do
         nil ->
           IO.puts "Source doesn't exist on crowdin yet"
         file ->
           IO.puts "Find matching remote file #{inspect file}"
-          download_translation(workspace, client, project_id, file["data"])
+          download_translation(workspace, client, project_id, file["data"], export_pattern)
       end
     end
     create_pr_if_changed(workspace)
