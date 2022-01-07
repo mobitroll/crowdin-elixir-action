@@ -141,6 +141,14 @@ defmodule CrowdinElixirAction do
     end
   end
 
+  def get_kahoot_android_language_code(target_language) do
+    case target_language["locale"] do
+      "zh-CN" -> "zh-rCN"
+      "zh-TW" -> "zh-rTW"
+      _ -> target_language["twoLettersCode"]
+    end
+  end
+
   def translate_file_name(export_pattern, target_language, file) do
     target_language
     |> Enum.reduce(export_pattern, fn {key, value}, acc ->
@@ -155,6 +163,7 @@ defmodule CrowdinElixirAction do
     |> String.replace("%file_name%", file["name"])
     |> String.replace("%original_file_name%", file["name"])
     |> String.replace("%kahoot_language_code%", get_kahoot_language_code(target_language))
+    |> String.replace("%kahoot_android_language_code%", get_kahoot_android_language_code(target_language))
   end
 
   def switch_to_localization_branch(workspace) do
