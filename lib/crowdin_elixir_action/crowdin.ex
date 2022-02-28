@@ -23,11 +23,15 @@ defmodule CrowdinElixirAction.Crowdin do
 
   # TODO(weih): Support directories
   def add_file(client, project_id, storage_id, name, export_pattern) do
+    # Crowdin gives the following message if our in house %kahoot_language_code% is used
+    # [exportPattern][exportPattern - If the resulting file name starts with the slash (/), it should contain at least one language identifier to prevent overriding translation in the archive [%language%, %two_letters_code%, %three_letters_code%, %locale%, %locale_with_underscore%, %android_code%, %osx_code%, %osx_locale%]
+    normalized_export_pattern = String.replace(export_pattern, "%kahoot_language_code%", "%two_letters_code%")
+      |> String.replace("%kahoot_android_language_code%", "%two_letters_code%")
     post(client, "/projects/#{project_id}/files", %{
       storageId: storage_id,
       name: name,
       exportOptions: %{
-        exportPattern: export_pattern
+        exportPattern: normalized_export_pattern
       }
     })
   end
