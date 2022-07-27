@@ -109,15 +109,15 @@ defmodule CrowdinElixirAction do
   def download_translation_for_language(workspace, client, project_id, file, target_language, export_pattern) do
     with {:ok, %{status: 200, body: body}} <- Crowdin.build_project_file_translation(client, project_id, file["id"], target_language["id"]),
          %{"data" => %{"url" => url}} <- body,
-         {:ok, res} <- Tesla.get(url) do
+         {:ok, %{status: 200, body: translation_body}} <- Tesla.get(url) do
       IO.puts "Download translation for language: #{target_language["id"]} of #{file["name"]}"
       target_file_name = translate_file_name(export_pattern, target_language, file)
       target_path = Path.join(workspace, target_file_name)
       File.mkdir_p(Path.dirname(target_path))
       case is_front_end_context() || project_id == "4" do
-        false -> File.write(target_path, res.body)
+        false -> File.write(target_path, translation_body)
         true ->
-          content = res.body
+          content = translation_body
           |> Jason.decode!()
           |> Enum.map(fn
             {key, value} when is_map(value) ->
