@@ -171,7 +171,7 @@ defmodule CrowdinElixirAction do
     File.cd!(workspace)
 
     IO.puts "Switch to localization branch: #{localization_branch}"
-    System.cmd("id") |> IO.inspect(label: :id)
+    System.cmd("id", []) |> IO.inspect(label: :id)
     System.cmd("ls", ["-ld", "/github/workspace"]) |> IO.inspect(label: :ls)
     System.cmd("git", ["remote", "-v"]) |> IO.inspect(label: :remote)
     System.cmd("git", ["fetch", "origin", localization_branch]) |> IO.inspect(label: :fetch)
