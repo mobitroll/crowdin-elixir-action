@@ -215,7 +215,7 @@ defmodule CrowdinElixirAction do
         base_branch = System.get_env("INPUT_BASE_BRANCH")
 
         client = Github.client(get_github_api_token())
-        with {:ok, res} <- Github.get_pulls(client, github_repository, base: base_branch, head: localization_branch),
+        with {:ok, res} <- Github.get_pulls(client, github_repository, base: base_branch, head: "mobitroll:#{localization_branch}"),
              200 <- res.status,
              prs <- res.body,
              matching_pr when is_nil(matching_pr) <- Enum.find(prs, fn pr -> pr["head"]["ref"] == localization_branch end) do
