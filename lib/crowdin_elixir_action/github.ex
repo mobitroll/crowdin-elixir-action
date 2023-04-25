@@ -14,7 +14,7 @@ defmodule CrowdinElixirAction.Github do
   end
 
   def get_pulls(client, repo, query) do
-    get(client, "/repos/#{repo}/pulls", query)
+    get(client, "/repos/#{repo}/pulls", query: query)
   end
 
   def create_pull_request(client, repo, body) do
