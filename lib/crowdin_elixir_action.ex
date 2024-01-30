@@ -145,6 +145,7 @@ defmodule CrowdinElixirAction do
     case target_language["locale"] do
       "zh-CN" -> "zh-rCN"
       "zh-TW" -> "zh-rTW"
+      "id-ID" -> "in"
       _ -> target_language["twoLettersCode"]
     end
   end
