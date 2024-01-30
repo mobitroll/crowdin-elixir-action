@@ -172,17 +172,8 @@ defmodule CrowdinElixirAction do
     File.cd!(workspace)
 
     IO.puts "Switch to localization branch: #{localization_branch}"
-    System.cmd("git", ~W(config --global --add safe.directory /github/workspace)) |> IO.inspect(label: :config)
-    System.cmd("git", ["remote", "-v"]) |> IO.inspect(label: :remote)
-    System.cmd("git", ["fetch", "origin", localization_branch]) |> IO.inspect(label: :fetch)
-    case System.cmd("git", ["show-branch", "remotes/origin/#{localization_branch}"]) do
-      {_, 128} ->
-        IO.puts "Create new #{localization_branch} branch"
-        System.cmd("git", ["checkout", "-b", localization_branch])
-      {_, 0} ->
-        IO.puts "Create #{localization_branch} branch based on origin"
-        System.cmd("git", ["checkout", "-b", localization_branch, "remotes/origin/#{localization_branch}"])
-    end
+    System.cmd("git", ~W(config --global --add safe.directory /github/workspace))
+    System.cmd("git", ["checkout", "-b", localization_branch])
   end
 
   def get_github_api_token() do
@@ -211,7 +202,7 @@ defmodule CrowdinElixirAction do
 
         System.cmd("git", ["add", "."])
         System.cmd("git", ["commit", "-m", "Update localization"])
-        System.cmd("git", ["push", "origin", localization_branch])
+        System.cmd("git", ["push", "-f", "origin", localization_branch]) |> IO.inspect(label: :push)
 
         base_branch = System.get_env("INPUT_BASE_BRANCH")
 
