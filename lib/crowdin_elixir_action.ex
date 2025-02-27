@@ -69,7 +69,7 @@ defmodule CrowdinElixirAction do
   end
 
   def find_matching_remote_file(client, project_id, source_name) do
-    with {:ok, res} <- Crowdin.list_files(client, project_id),
+    with {:ok, res} <- Crowdin.list_files(client, project_id, source_name),
          200 <- res.status do
       Enum.find(res.body["data"], fn file -> file["data"]["name"] == source_name end)
     end

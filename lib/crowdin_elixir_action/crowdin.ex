@@ -17,8 +17,8 @@ defmodule CrowdinElixirAction.Crowdin do
     get(client, "/projects/#{project_id}")
   end
 
-  def list_files(client, project_id) do
-    get(client, "/projects/#{project_id}/files")
+  def list_files(client, project_id, filename) do
+    get(client, "/projects/#{project_id}/files", query: [filter: filename])
   end
 
   # TODO(weih): Support directories
